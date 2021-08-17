@@ -19,10 +19,23 @@
         android:id="@+id/keutamaanFragment"
         android:name="com.example.puasareminder.view.KeutamaanFragment"
         android:label="fragment_keutamaan"
-        tools:layout="@layout/fragment_keutamaan" />
+        tools:layout="@layout/fragment_keutamaan" >
+        <action
+            android:id="@+id/action_keutamaanFragment_to_penjelasanPuasaFragment"
+            app:destination="@id/penjelasanPuasaFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.puasareminder.view.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/penjelasanPuasaFragment"
+        android:name="com.example.puasareminder.view.PenjelasanPuasaFragment"
+        android:label="PenjelasanPuasaFragment" >
+        <argument
+            android:name="jenis"
+            app:argType="com.example.puasareminder.model.JenisPuasa"
+            app:nullable="true" />
+    </fragment>
 </navigation>

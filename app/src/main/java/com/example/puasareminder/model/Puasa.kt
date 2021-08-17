@@ -17,7 +17,9 @@ data class Puasa(
     @Expose
     var tanggal: Date,
 
-    @SerializedName("jenis_puasa")
+    @SerializedName("jenis")
     @Expose
-    var jenisPuasa: JenisPuasa
+    var jenisPuasa: JenisPuasa,
+
+    var status: String = ""
 )

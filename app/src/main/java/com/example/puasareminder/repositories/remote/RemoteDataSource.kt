@@ -2,6 +2,7 @@ package com.example.puasareminder.repositories.remote
 
 import android.util.Log
 import com.example.puasareminder.datastore.UserDataStore
+import com.example.puasareminder.model.JenisPuasa
 import com.example.puasareminder.model.Puasa
 import com.example.puasareminder.model.Users
 import com.example.puasareminder.request.ApiRequest
@@ -82,7 +83,81 @@ class RemoteDataSource @Inject constructor(
             }
         }
     }
+    fun getJenisPuasa(): Flow<ResponseState<List<JenisPuasa>>>{
+        return flow{
+            emit(ResponseState.Loading())
+            try{
+                userDataStore.getTokenUserFlow.collect {
+                    val response = apiService.getJenisPuasa(token = "Bearer $it")
+                    val data = response.data
+                    if(response.meta!!.code == 200){
+                        if(!data.isNullOrEmpty()){
+                            emit(ResponseState.Success(data))
+                        }else{
+                            emit(ResponseState.Empty)
+                        }
+                    }else{
+                        emit(ResponseState.Error(response.meta!!.message))
+                    }
+                }
+            }catch (e: Exception){
+                emit(ResponseState.Error(e.toString()))
+            }
+        }
+    }
 
+    fun getUsersById(): Flow<ResponseState<Users>>{
+        return flow{
+            emit(ResponseState.Loading())
+            try{
+                userDataStore.getTokenUserFlow.collect {
+                    val response = apiService.getUsersById(token = "Bearer $it")
+                    val data = response.data
+                    if(response.meta!!.code == 200){
+                        if(data != null){
+                            emit(ResponseState.Success(data))
+                        }else{
+                            emit(ResponseState.Empty)
+                        }
+                    }else{
+                        emit(ResponseState.Error(response.meta!!.message))
+                    }
+                }
+            }catch (e: Exception){
+                emit(ResponseState.Error(e.toString()))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
+    fun logoutUser(): Flow<ResponseState<Boolean>> {
+        return flow {
+            emit(ResponseState.Loading())
+            try {
+                userDataStore.getTokenUserFlow.collect {
+                    val response = apiService.logoutUser(token = "Bearer $it")
+                    val data = response.data
+                    if (response.meta!!.code == 200) {
+
+                        if (data != null) {
+                            if(data) {
+                                userDataStore.storeStatusLogin(false)
+                                userDataStore.storeTokenUser("")
+                                userDataStore.storeUser("")
+                                emit(ResponseState.Success(data))
+                            }else{
+                                emit(ResponseState.Error("Logout error"))
+                            }
+                        } else {
+                            emit(ResponseState.Empty)
+                        }
+                    } else {
+                        emit(ResponseState.Error(response.meta!!.message))
+                    }
+                }
+            } catch (e: Exception) {
+                emit(ResponseState.Error(e.toString()))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
 }

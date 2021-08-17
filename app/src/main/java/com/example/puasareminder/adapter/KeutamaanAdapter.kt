@@ -6,16 +6,16 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.puasareminder.R
+import com.example.puasareminder.databinding.ItemJenisBinding
 import com.example.puasareminder.databinding.ItemPuasaBinding
+import com.example.puasareminder.model.JenisPuasa
 import com.example.puasareminder.model.Puasa
 
-class PuasaAdapter(
-    val insertPuasa: (Puasa) -> Unit
-): RecyclerView.Adapter<PuasaAdapter.ViewHolder>(){
+class KeutamaanAdapter(val showKeutamaan: (JenisPuasa) -> Unit): RecyclerView.Adapter<KeutamaanAdapter.ViewHolder>(){
 
-    private val listPuasa = ArrayList<Puasa>()
+    private val listPuasa = ArrayList<JenisPuasa>()
 
-    fun setListPuasa(listPuasa: List<Puasa>){
+    fun setListPuasa(listPuasa: List<JenisPuasa>){
         this.listPuasa.clear()
         this.listPuasa.addAll(listPuasa)
         notifyDataSetChanged()
@@ -23,7 +23,7 @@ class PuasaAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding: ItemPuasaBinding = DataBindingUtil.inflate(inflater, R.layout.item_puasa, parent,false)
+        val binding: ItemJenisBinding = DataBindingUtil.inflate(inflater, R.layout.item_jenis, parent,false)
         return ViewHolder(binding)
     }
 
@@ -36,19 +36,13 @@ class PuasaAdapter(
         return listPuasa.size
     }
 
-    inner class ViewHolder(val binding: ItemPuasaBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(puasa: Puasa){
+    inner class ViewHolder(val binding: ItemJenisBinding): RecyclerView.ViewHolder(binding.root){
+        fun bind(puasa: JenisPuasa){
             with(binding){
-                val date = DateFormat.format("dd MMM yyyy", puasa.tanggal).toString()
-                tvTanggal.text = date
-                tvPuasa.text = puasa.jenisPuasa.nama
-
-                switchPuasa.isChecked = puasa.status == "1"
-
-                switchPuasa.setOnCheckedChangeListener { compoundButton, b ->
-                    insertPuasa(puasa)
-                }
-
+                tvPuasa.text = puasa.nama
+            }
+            itemView.setOnClickListener {
+                showKeutamaan(puasa)
             }
         }
     }
